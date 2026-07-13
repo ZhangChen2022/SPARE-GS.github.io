@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REFINE: Visual Comparison Across Scenes</title>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/styles.css"/>
+  <script defer src="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/index.js"></script>
+
+  <style>
+    body {
+      background-color: #f0f2f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 30px 20px;
+    }
+
+    .header-section {
+      text-align: center;
+      margin-bottom: 30px;
+      width: 100%;
+      max-width: 1400px;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 20px;
+      z-index: 100;
+    }
+
+    h1 {
+      margin: 0 0 15px 0;
+      color: #2c3e50;
+      font-size: 24px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+    }
+
+    select {
+      padding: 8px 16px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background-color: #f8f9fa;
+      cursor: pointer;
+      font-weight: bold;
+      color: #2980b9;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+
+      .gallery {
+      display: grid; /* 启用网格布局 */
+      grid-template-columns: repeat(2, 1fr); /* 核心代码：强制每一行平均分两列 */
+      gap: 30px; /* 两个视频之间的间距 */
+      width: 100%;
+      max-width: 1400px; /* 拓宽视频展示区 */
+    }
+
+    .scene-card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    .scene-title {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #34495e;
+      text-transform: capitalize;
+      border-bottom: 2px solid #ecf0f1;
+      padding-bottom: 10px;
+    }
+
+    .slider-wrapper {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    img-comparison-slider {
+      display: block;
+      width: 100%;
+    }
+    
+    img-comparison-slider:focus {
+      outline: none;
+    }
+
+    video {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover; 
+    }
+
+    .video-label {
+      position: absolute;
+      top: 15px;
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 6px;
+      pointer-events: none;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .method-title {
+      font-size: 13px;
+      font-weight: bold;
+      line-height: 1.2;
+    }
+
+    .method-metrics {
+      font-size: 12px;
+      color: #f1c40f; 
+      font-family: monospace;
+      line-height: 1.2;
+    }
+
+    .label-left { left: 15px; }
+    .label-right {
+      right: 15px;
+      background: rgba(39, 174, 96, 0.85); 
+    }
+    .label-right .method-metrics { color: #fff; }
+
+    .instruction {
+      text-align: center;
+      color: #7f8c8d;
+      font-size: 0.9em;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header-section">
+  <h1>REFINE: Visual Comparison Across Scenes</h1>
+  <div class="controls">
+    <label for="global-method-selector"><strong>Compare REFINE (Ours) against:</strong></label>
+    <select id="global-method-selector">
+      <option value="_GHAP">GHAP</option>
+      <option value="_LighGaussian">LightGaussian</option>
+      <option value="_mesonGS">MesonGS</option>
+      <option value="_PUP">PUP</option>
+    </select>
+  </div>
+  <p style="margin: 10px 0 0 0; font-size: 13px; color: #7f8c8d;">
+    Drag the slider to compare.
+  </p>
+</div>
+
+<div class="gallery" id="gallery-container">
+  </div>
+
+<script>
+  // ==========================================
+  // 真实实验数据 (提取自提供的表格)
+  // ==========================================
+  const scenesData = {
+    "bicycle": {
+      "Ours": { psnr: "24.87", gflops: "5.73" },
+      "_GHAP": { title: "GHAP", psnr: "19.42", gflops: "248.45" },
+      "_LighGaussian": { title: "LightGaussian", psnr: "24.56", gflops: "41.70" },
+      "_mesonGS": { title: "MesonGS", psnr: "23.83", gflops: "17851.16" },
+      "_PUP": { title: "PUP", psnr: "23.98", gflops: "17932.70" }
+    },
+    "drjohnson": {
+      "Ours": { psnr: "28.77", gflops: "3.18" },
+      "_GHAP": { title: "GHAP", psnr: "22.66", gflops: "137.95" },
+      "_LighGaussian": { title: "LightGaussian", psnr: "25.62", gflops: "31.38" },
+      "_mesonGS": { title: "MesonGS", psnr: "28.14", gflops: "13438.72" },
+      "_PUP": { title: "PUP", psnr: "28.74", gflops: "13499.51" }
+    },
+    "room": {
+      "Ours": { psnr: "30.72", gflops: "1.49" },
+      "_GHAP": { title: "GHAP", psnr: "21.49", gflops: "64.54" },
+      "_LighGaussian": { title: "LightGaussian", psnr: "21.96", gflops: "17.36" },
+      "_mesonGS": { title: "MesonGS", psnr: "26.71", gflops: "7436.08" },
+      "_PUP": { title: "PUP", psnr: "30.92", gflops: "7469.57" }
+    },
+    "stump": {
+      "Ours": { psnr: "26.45", gflops: "4.64" },
+      "_GHAP": { title: "GHAP", psnr: "22.25", gflops: "201.03" },
+      "_LighGaussian": { title: "LightGaussian", psnr: "23.72", gflops: "21.76" },
+      "_mesonGS": { title: "MesonGS", psnr: "26.33", gflops: "9307.12" },
+      "_PUP": { title: "PUP", psnr: "25.05", gflops: "9350.51" }
+    },
+    "train": {
+      "Ours": { psnr: "21.27", gflops: "0.96" },
+      "_GHAP": { title: "GHAP", psnr: "15.81", gflops: "41.58" },
+      "_LighGaussian": { title: "LightGaussian", psnr: "19.10", gflops: "10.83" },
+      "_mesonGS": { title: "MesonGS", psnr: "20.30", gflops: "4636.54" },
+      "_PUP": { title: "PUP", psnr: "21.48", gflops: "4657.44" }
+    },
+    "truck": {
+      "Ours": { psnr: "24.67", gflops: "2.38" },
+      "_GHAP": { title: "GHAP", psnr: "18.13", gflops: "102.95" },
+      "_LighGaussian": { title: "LightGaussian", psnr: "23.64", gflops: "22.35" },
+      "_mesonGS": { title: "MesonGS", psnr: "23.66", gflops: "9571.56" },
+      "_PUP": { title: "PUP", psnr: "24.88", gflops: "9614.91" }
+    }
+  };
+
+  const gallery = document.getElementById("gallery-container");
+  const globalSelector = document.getElementById("global-method-selector");
+  const sceneList = Object.keys(scenesData);
+
+  // 1. 动态构建所有场景卡片的 HTML
+  sceneList.forEach(scene => {
+    // 假设文件层级关系为： HTML 和 Visual_Video 文件夹在同一目录
+    const oursVideoPath = `Visual_Video/${scene}/${scene}_REFINE(Ours).mp4`;
+    const initialMethod = globalSelector.value;
+    const initialLeftVideoPath = `Visual_Video/${scene}/${scene}${initialMethod}.mp4`;
+    
+    const oursData = scenesData[scene]["Ours"];
+    const leftData = scenesData[scene][initialMethod];
+
+    const cardHTML = `
+      <div class="scene-card" id="card-${scene}">
+        <h2 class="scene-title">Scene: ${scene}</h2>
+        <div class="slider-wrapper">
+          <img-comparison-slider class="scene-slider">
+            
+            <div slot="first" style="position: relative; width: 100%;">
+              <div class="video-label label-left">
+                <div class="method-title left-title">${leftData.title}</div>
+                <div class="method-metrics left-metrics">PSNR: ${leftData.psnr} | GFLOPS: ${leftData.gflops}</div>
+              </div>
+              <video class="vid-left" width="100%" autoplay muted loop playsinline>
+                <source src="${initialLeftVideoPath}" type="video/mp4">
+              </video>
+            </div>
+            
+            <div slot="second" style="position: relative; width: 100%;">
+              <div class="video-label label-right">
+                <div class="method-title">REFINE (Ours)</div>
+                <div class="method-metrics">PSNR: ${oursData.psnr} | GFLOPS: ${oursData.gflops}</div>
+              </div>
+              <video class="vid-right" width="100%" autoplay muted loop playsinline>
+                <source src="${oursVideoPath}" type="video/mp4">
+              </video>
+            </div>
+
+            <svg slot="handle" xmlns="http://www.w3.org/2000/svg" width="100" viewBox="-8 -3 16 6">
+              <path stroke="#fff" d="M -5 -2 L -7 0 L -5 2 M -5 -2 L -5 2 M 5 -2 L 7 0 L 5 2 M 5 -2 L 5 2" stroke-width="1.5" fill="none" vector-effect="non-scaling-stroke"></path>
+            </svg>
+            
+          </img-comparison-slider>
+        </div>
+      </div>
+    `;
+    gallery.insertAdjacentHTML('beforeend', cardHTML);
+  });
+
+  // 2. 为每个场景绑定独立的播放控制和同步逻辑
+  sceneList.forEach(scene => {
+    const card = document.getElementById(`card-${scene}`);
+    const v1 = card.querySelector('.vid-left');
+    const v2 = card.querySelector('.vid-right');
+    const slider = card.querySelector('.scene-slider');
+
+    // 初始化 0.3 倍速
+    v1.playbackRate = 0.3;
+    v2.playbackRate = 0.3;
+
+    // 播放状态同步
+    v1.addEventListener("play", () => {
+      v2.playbackRate = 0.3; // 确保跟随左侧倍速
+      v2.play();
+    });
+    v1.addEventListener("pause", () => v2.pause());
+    
+    // 进度条时间纠偏
+    v1.addEventListener("timeupdate", () => {
+      if (Math.abs(v1.currentTime - v2.currentTime) > 0.1) {
+        v2.currentTime = v1.currentTime;
+      }
+    });
+
+    // 点击播放/暂停
+    slider.addEventListener('click', (e) => {
+      if(e.target.tagName.toLowerCase() === 'svg' || e.target.closest('svg')) return;
+      if (v1.paused) {
+        v1.play();
+        v2.play();
+      } else {
+        v1.pause();
+        v2.pause();
+      }
+    });
+  });
+
+  // 3. 全局下拉菜单切换逻辑
+  globalSelector.addEventListener("change", (e) => {
+    const selectedMethodCode = e.target.value;
+    const selectedMethodTitle = e.target.options[e.target.selectedIndex].text;
+
+    sceneList.forEach(scene => {
+      const card = document.getElementById(`card-${scene}`);
+      const v1 = card.querySelector('.vid-left');
+      const v2 = card.querySelector('.vid-right');
+      const titleEl = card.querySelector('.left-title');
+      const metricsEl = card.querySelector('.left-metrics');
+
+      // 提取最新的路径 (保证你的文件命名是 scene_xxx.mp4)
+      const newVideoPath = `Visual_Video/${scene}/${scene}${selectedMethodCode}.mp4`;
+      v1.querySelector('source').src = newVideoPath;
+      v1.load();
+      v1.playbackRate = 0.3; // 在 load 后重新设置倍速
+      v1.play();
+
+      // 同步右侧视频时间
+      v2.currentTime = 0;
+      v1.currentTime = 0;
+
+      // 更新左侧面板的文字与指标
+      const data = scenesData[scene][selectedMethodCode];
+      titleEl.innerText = data.title;
+      metricsEl.innerText = `PSNR: ${data.psnr} | GFLOPS: ${data.gflops}`;
+    });
+  });
+
+</script>
+
+</body>
+</html>

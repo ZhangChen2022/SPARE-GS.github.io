@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="SPARE-GS: Structural Parsimony and Resource Efficiency for 3D Gaussian Splatting">
+  <meta name="keywords" content="3D Gaussian Splatting, Novel View Synthesis, Budgeted Optimization, Structural Parsimony, Efficiency Compression, SPARE-GS">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SPARE-GS: Structural Parsimony and Resource Efficiency for 3D Gaussian Splatting</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/styles.css"/>
+  <script defer src="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/index.js"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+
+  <style>
+    .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      border: 1px solid #e9ecef;
+    }
+    .controls select {
+      padding: 8px 16px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    .metric-label {
+      position: absolute;
+      top: 15px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 13px;
+      line-height: 1.4;
+      text-align: left;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .label-left {
+      left: 15px;
+      background: rgba(0, 0, 0, 0.75);
+    }
+    .label-right {
+      right: 15px;
+      background: rgba(39, 174, 96, 0.85);
+    }
+    .metric-title { font-size: 15px; font-weight: bold; margin-bottom: 3px; }
+    .metric-data { font-family: monospace; color: #f1c40f; }
+    .label-right .metric-data { color: #fff; }
+  </style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-2 publication-title">SPARE-GS: Structural Parsimony and Resource Efficiency for 3D Gaussian Splatting</h1>
+          
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><a href="https://github.com/ZhangChen2022">Zhang Chen</a><sup>1,4</sup>,</span>
+            <span class="author-block">Shuai Wan<sup>1</sup>,</span>
+            <span class="author-block">Fuzheng Yang<sup>2</sup>,</span>
+            <span class="author-block">Weiyao Lin<sup>3</sup>,</span>
+            <span class="author-block">Junhui Hou<sup>4</sup></span>
+          </div>
+
+          <div class="is-size-6 publication-authors" style="margin-top: 15px;">
+            <span class="author-block"><sup>1</sup>Northwestern Polytechnical University</span>&nbsp;&nbsp;
+            <span class="author-block"><sup>2</sup>Xidian University</span>&nbsp;&nbsp;
+            <span class="author-block"><sup>3</sup>Shanghai Jiao Tong University</span>&nbsp;&nbsp;
+            <span class="author-block"><sup>4</sup>City University of Hong Kong</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="./paper.pdf" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/ZhangChen2022/SPARE-GS" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code</span>
+                  </a>
+              </span>
+            </div>
+          </div>
+          
+          <div class="container is-max-desktop" style="margin-top: 30px;">
+            <img src="./fig/overview_abla.jpg" alt="SPARE-GS Overview" style="width: 100%; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <div class="content has-text-justified" style="margin-top: 15px; font-size: 0.95em; color: #4a4a4a;">
+              <p><b>Overview of the SPARE-GS framework.</b> To achieve global budgeted-constrained optimization, our method establishes a <i>Marginal Utility Proxy</i> via scene voxelization. We utilize <i>Feedback Control via Target Allocation</i> to dynamically compute regional quotas, and apply <i>Budget-Guided Structural Modulation</i> to guide densification, redundancy pruning, and termination. The standard pipeline is controlled and evaluated by our proposed modules.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            3D Gaussian Splatting (3DGS) achieves high-fidelity novel view synthesis with real-time rendering, yet its training efficiency and representation compactness are hindered by excessive primitive proliferation. To address this limitation, we formulate the structural evolution of 3DGS as a global budget-constrained optimization problem and derive a optimality condition, which requires the marginal utility of structural resources to be balanced across spatial regions under a finite primitive budget. Based on this formulation, we introduce SPARE-GS, a general plug-and-play framework that dynamically aligns Gaussian distribution with regional representational demand. 
+          </p>
+          <p>
+            SPARE-GS estimates capacity-normalized regional demand, assigns adaptive target quotas, and uses regional budget deviations to coordinate densification, pruning and daptive termination toward a more balanced structural allocation. Extensive experiments across standard, accelerated, and structure-enhanced 3DGS pipelines demonstrate that SPARE-GS reduces the Gaussian count and training time by an average of 32.60% and 24.84%, respectively, while achieving a slight average PSNR improvement of 0.06 dB. Moreover, the resulting compact representations reduce downstream processing time and improve the rate-distortion performance of diverse compression and pruning methods, demonstrating the broad applicability of global structural budget regulation.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="columns is-centered has-text-centered" style="margin-top: 30px;">
+      <div class="column is-four-fifths">
+        <figure class="image">
+          <img src="./fig/teaser_figure.png" alt="Training Gains">
+          <figcaption class="is-size-6" style="margin-top: 5px; margin-bottom: 30px; color: #555;">(a) Efficiency and Quality Gains during 3DGS Training</figcaption>
+          
+          <img src="./fig/post_processing_results.png" alt="Post-processing Benefits">
+          <figcaption class="is-size-6" style="margin-top: 5px; margin-bottom: 20px; color: #555;">(b) Benefits on Post-processing Compression & Pruning</figcaption>
+          
+          <div class="content has-text-justified" style="margin-top: 15px; font-size: 0.95em; color: #4a4a4a;">
+            <p><b>Performance gains of incorporating SPARE-GS.</b> (a) Training: across diverse 3DGS pipelines, SPARE-GS reduces training time and Gaussian counts without sacrificing rendering quality. (b) Post-Processing: this compact representation benefits downstream tasks, delivering substantial storage and latency savings for various compression and pruning frameworks.</p>
+          </div>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-widescreen">
+    <h2 class="title is-3 has-text-centered">Visual Comparison (Plug-and-Play)</h2>
+    
+    <div class="controls">
+      <label for="method-selector"><strong>Select Base Pipeline:</strong></label>
+      <select id="method-selector">
+        <option value="3dgs">3DGS</option>
+        <option value="dashguassian">DashGaussian</option>
+        <option value="fastGS">FastGS</option>
+        <option value="mipsplatting">Mip-Splatting</option>
+        <option value="tamingGS">TamingGS</option>
+      </select>
+    </div>
+
+    <div class="columns is-centered is-multiline" id="gallery-container">
+      </div>
+
+  </div>
+</section>
+
+<script>
+  const expData = {
+    "3dgs": {
+      "name": "3DGS",
+      "scenes": {
+        "treehill":  { base: {psnr: "22.07", size: "304", time: "1338.99"}, ours: {psnr: "22.24", size: "206", time: "1028.21"} },
+        "playroom":  { base: {psnr: "24.43", size: "185", time: "1046.63"}, ours: {psnr: "24.83", size: "92", time: "667.36"} },
+        "train":     { base: {psnr: "20.60", size: "109", time: "596.25"},  ours: {psnr: "21.33", size: "62", time: "392.71"} },
+        "hollywood": { base: {psnr: "26.08", size: "678", time: "2323.64"}, ours: {psnr: "26.58", size: "352", time: "1380.47"} }
+      }
+    },
+    "tamingGS": {
+      "name": "TamingGS",
+      "scenes": {
+        "bicycle":   { base: {psnr: "25.81", size: "109", time: "704.18"}, ours: {psnr: "26.04", size: "100", time: "597.76"} },
+        "drjohnson": { base: {psnr: "30.09", size: "162", time: "715.77"}, ours: {psnr: "30.08", size: "137", time: "675.20"} },
+        "truck":     { base: {psnr: "26.52", size: "272", time: "973.49"}, ours: {psnr: "26.67", size: "131", time: "614.16"} },
+        "hollywood": { base: {psnr: "25.98", size: "221", time: "1128.44"}, ours: {psnr: "26.50", size: "220", time: "1182.16"} }
+      }
+    },
+    "mipsplatting": {
+      "name": "Mip-Splatting",
+      "scenes": {
+        "bicycle":   { base: {psnr: "19.45", size: "843", time: "3978.42"}, ours: {psnr: "19.19", size: "478", time: "2576.81"} },
+        "playroom":  { base: {psnr: "31.94", size: "284", time: "1977.34"}, ours: {psnr: "32.07", size: "147", time: "1226.36"} },
+        "train":     { base: {psnr: "26.17", size: "148", time: "1179.89"}, ours: {psnr: "26.72", size: "88", time: "792.00"} },
+        "hollywood": { base: {psnr: "28.19", size: "774", time: "3981.40"}, ours: {psnr: "27.93", size: "452", time: "2646.48"} }
+      }
+    },
+    "dashguassian": {
+      "name": "DashGaussian",
+      "scenes": {
+        "bicycle":   { base: {psnr: "24.95", size: "458", time: "1521.76"}, ours: {psnr: "24.98", size: "308", time: "865.20"} },
+        "playroom":  { base: {psnr: "27.21", size: "174", time: "727.95"},  ours: {psnr: "27.94", size: "89", time: "523.87"} },
+        "train":     { base: {psnr: "23.43", size: "107", time: "621.52"},  ours: {psnr: "23.46", size: "64", time: "440.60"} },
+        "hollywood": { base: {psnr: "28.81", size: "670", time: "2293.83"}, ours: {psnr: "29.23", size: "378", time: "1422.89"} }
+      }
+    },
+    "fastGS": {
+      "name": "FastGS",
+      "scenes": {
+        "bicycle":   { base: {psnr: "21.85", size: "103", time: "310.11"}, ours: {psnr: "21.76", size: "91", time: "291.21"} },
+        "playroom":  { base: {psnr: "33.54", size: "25", time: "159.87"},  ours: {psnr: "33.54", size: "22", time: "149.56"} },
+        "train":     { base: {psnr: "21.67", size: "19", time: "136.48"},   ours: {psnr: "21.72", size: "22", time: "146.96"} },
+        "hollywood": { base: {psnr: "25.17", size: "126", time: "482.96"}, ours: {psnr: "24.98", size: "98", time: "422.56"} }
+      }
+    }
+  };
+
+  const methodSelector = document.getElementById('method-selector');
+  const galleryContainer = document.getElementById('gallery-container');
+
+  function renderGallery(methodKey) {
+    galleryContainer.innerHTML = ''; 
+    const methodData = expData[methodKey];
+    const scenes = Object.keys(methodData.scenes);
+    
+    scenes.forEach(scene => {
+      const data = methodData.scenes[scene];
+      
+      // ⚠️ 核心修复：把 + 号转码为 %2B，防止浏览器错误识别为空格
+      const baseImgPath = `./fig/${methodKey}/${scene}/Base.png`;
+      const oursImgPath = `./fig/${methodKey}/${scene}/%2BOurs.png`;
+
+      const sceneTitle = scene.charAt(0).toUpperCase() + scene.slice(1);
+
+      const cardHtml = `
+        <div class="column is-half">
+          <h3 class="title is-5 has-text-centered">Scene: ${sceneTitle}</h3>
+          
+          <img-comparison-slider style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); background: #000;">
+            
+            <div slot="first" style="position: relative; width: 100%;">
+              <img src="${baseImgPath}" style="display: block; width: 100%; object-fit: cover;" alt="${methodData.name} Base">
+              <div class="metric-label label-left">
+                <div class="metric-title">Base: ${methodData.name}</div>
+                <div class="metric-data">PSNR: ${data.base.psnr} dB<br>Size: ${data.base.size} MB<br>Time: ${data.base.time} s</div>
+              </div>
+            </div>
+            
+            <div slot="second" style="position: relative; width: 100%;">
+              <img src="${oursImgPath}" style="display: block; width: 100%; object-fit: cover;" alt="${methodData.name} + SPARE-GS">
+              <div class="metric-label label-right">
+                <div class="metric-title">+ SPARE-GS (Ours)</div>
+                <div class="metric-data">PSNR: ${data.ours.psnr} dB<br>Size: ${data.ours.size} MB<br>Time: ${data.ours.time} s</div>
+              </div>
+            </div>
+
+            <svg slot="handle" xmlns="http://www.w3.org/2000/svg" width="100" viewBox="-8 -3 16 6">
+              <path stroke="#fff" d="M -5 -2 L -7 0 L -5 2 M -5 -2 L -5 2 M 5 -2 L 7 0 L 5 2 M 5 -2 L 5 2" stroke-width="1.5" fill="none" vector-effect="non-scaling-stroke"></path>
+            </svg>
+
+          </img-comparison-slider>
+        </div>
+      `;
+      galleryContainer.insertAdjacentHTML('beforeend', cardHtml);
+    });
+  }
+
+  // 监听下拉菜单变化
+  methodSelector.addEventListener('change', (e) => {
+    renderGallery(e.target.value);
+  });
+
+  // 初始渲染 3DGS
+  renderGallery('3dgs');
+</script>
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{chen2026sparegs,
+  author    = {Zhang Chen, Shuai Wan, Fuzheng Yang, Weiyao Lin, and Junhui Hou},
+  title     = {SPARE-GS: Structural Parsimony and Resource Efficiency for 3D Gaussian Splatting},
+  journal   = {arXiv preprint arXiv:2606.09074},
+  year      = {2026},
+}</code></pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link" href="./paper.pdf">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href="https://github.com/ZhangChen2022/SPARE-GS" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>. 
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
